@@ -68,6 +68,21 @@ public class Main {
                     System.out.println(
                             "Chave privada: " + privateKey.getFormat()
                     );
+
+                    boolean matches = rsaKeyService.keysMatch(
+                            publicKey,
+                            privateKey
+                    );
+
+                    if (matches) {
+                        System.out.println(
+                                "As chaves pertencem ao mesmo par RSA!"
+                        );
+                    } else {
+                        System.out.println(
+                                "As chaves RSA não correspondem!"
+                        );
+                    }
                 }
 
             } catch (IOException | GeneralSecurityException e) {

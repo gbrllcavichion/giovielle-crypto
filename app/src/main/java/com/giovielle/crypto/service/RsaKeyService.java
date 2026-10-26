@@ -1,6 +1,7 @@
 package com.giovielle.crypto.service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -11,6 +12,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
@@ -75,5 +77,23 @@ public class RsaKeyService {
             KeyFactory.getInstance("RSA");
 
         return keyFactory.generatePrivate(keySpec);
+    }
+
+    public boolean keysMatch(PublicKey publicKey, PrivateKey privateKey)
+        throws GeneralSecurityException {
+
+        byte[] message = "Giovielle Crypto".getBytes(StandardCharsets.UTF_8);
+
+        Signature signature = Signature.getInstance("SHA256withRSA");
+
+        signature.initSign(privateKey);
+        signature.update(message);
+
+        byte[] signedMessage = signature.sign();
+
+        signature.initVerify(publicKey);
+        signature.update(message);
+
+        return signature.verify(signedMessage);
     }
 }
