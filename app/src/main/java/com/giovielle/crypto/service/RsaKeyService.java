@@ -2,6 +2,7 @@ package com.giovielle.crypto.service;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -38,6 +39,12 @@ public class RsaKeyService {
         Path publicKeyPath = directory.resolve(name + ".pu");
         Path privateKeyPath = directory.resolve(name + ".pr");
 
+        if (Files.exists(publicKeyPath) || Files.exists(privateKeyPath)) {
+            throw new FileAlreadyExistsException(
+            "Já existem arquivos de chave com esse nome."
+         );
+        }
+        
         Files.write(
             publicKeyPath,
             keyPair.getPublic().getEncoded(),
