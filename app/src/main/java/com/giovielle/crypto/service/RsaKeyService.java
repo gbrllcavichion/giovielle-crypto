@@ -14,8 +14,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 
 public class RsaKeyService {
 
@@ -102,5 +107,40 @@ public class RsaKeyService {
         signature.update(message);
 
         return signature.verify(signedMessage);
+    }
+
+    public byte[] encryptBytes(PublicKey publicKey, byte[] data)
+            throws GeneralSecurityException {
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPPadding");
+
+        OAEPParameterSpec oaepSpec = new OAEPParameterSpec(
+                "SHA-256",
+                "MGF1",
+                MGF1ParameterSpec.SHA256,
+                PSource.PSpecified.DEFAULT
+        );
+
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey, oaepSpec);
+
+        return cipher.doFinal(data);
+    }
+
+
+    public byte[] decryptBytes(PrivateKey privateKey, byte[] encryptedData)
+            throws GeneralSecurityException {
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPPadding");
+
+        OAEPParameterSpec oaepSpec = new OAEPParameterSpec(
+                "SHA-256",
+                "MGF1",
+                MGF1ParameterSpec.SHA256,
+                PSource.PSpecified.DEFAULT
+        );
+
+        cipher.init(Cipher.DECRYPT_MODE, privateKey, oaepSpec);
+
+        return cipher.doFinal(encryptedData);
     }
 }
