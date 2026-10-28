@@ -1,0 +1,6 @@
+Olá, Giovana!
+
+Este é nosso primeiro arquivo criptografado
+pelo Giovielle Crypto utilizando AES-CTR.
+
+Criptografia Aplicada - UNISINOS

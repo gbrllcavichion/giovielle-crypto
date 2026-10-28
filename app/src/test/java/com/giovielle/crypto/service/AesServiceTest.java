@@ -16,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.giovielle.crypto.utils.FileUtils;
+
 public class AesServiceTest {
 
     private final AesService aesService = new AesService();
@@ -70,7 +72,7 @@ public class AesServiceTest {
 
         assertTrue(Files.exists(encryptedFile));
 
-        byte[] encrypted = Files.readAllBytes(encryptedFile);
+        byte[] encrypted = FileUtils.readHex(encryptedFile);
 
         assertFalse(Arrays.equals(original, encrypted));
 
@@ -111,6 +113,31 @@ public class AesServiceTest {
         byte[] decrypted = Files.readAllBytes(decryptedFile);
 
         assertArrayEquals(original, decrypted);
+    }
+
+
+    @Test
+    void shouldSaveAesKeyAndIv(@TempDir Path tempDir)
+            throws Exception {
+
+        SecretKey key = aesService.generateKey(128);
+        byte[] iv = aesService.generateIv();
+
+        Path keyFile = tempDir.resolve("K.txt");
+        Path ivFile = tempDir.resolve("IV.txt");
+
+        FileUtils.saveHex(keyFile, key.getEncoded());
+        FileUtils.saveHex(ivFile, iv);
+
+        assertArrayEquals(
+                key.getEncoded(),
+                FileUtils.readHex(keyFile)
+        );
+
+        assertArrayEquals(
+                iv,
+                FileUtils.readHex(ivFile)
+        );
     }
 
 }

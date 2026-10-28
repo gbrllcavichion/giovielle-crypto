@@ -10,3 +10,6 @@ build
 # Generated cryptographic keys
 keys/
 *.pr
+
+# Generated cryptographic material
+output/

@@ -13,6 +13,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.giovielle.crypto.utils.FileUtils;
+
 public class AesService {
 
     private static final int IV_SIZE_BYTES = 16;
@@ -63,13 +65,8 @@ public class AesService {
 
         byte[] cipherText = cipher.doFinal(plainText);
 
-        Files.write(
-                outputPath,
-                cipherText,
-                StandardOpenOption.CREATE_NEW
-        );
+        FileUtils.saveHex(outputPath, cipherText);
     }
-
 
     public void decryptFile(Path inputPath, Path outputPath, SecretKey key, byte[] iv) 
         throws IOException, GeneralSecurityException {
@@ -86,14 +83,14 @@ public class AesService {
 
         cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
 
-        byte[] cipherText = Files.readAllBytes(inputPath);
+        byte[] cipherText = FileUtils.readHex(inputPath);
 
         byte[] plainText = cipher.doFinal(cipherText);
 
         Files.write(
-                outputPath,
-                plainText,
-                StandardOpenOption.CREATE_NEW
+            outputPath,
+            plainText,
+            StandardOpenOption.CREATE_NEW
         );
     }
 
